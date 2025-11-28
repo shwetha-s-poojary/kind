@@ -20,10 +20,10 @@ package loadbalancer
 import (
 	"fmt"
 
+	"sigs.k8s.io/kind/pkg/exec"
 	"sigs.k8s.io/kind/pkg/cluster/constants"
 	"sigs.k8s.io/kind/pkg/errors"
 	"sigs.k8s.io/kind/pkg/internal/apis/config"
-
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	"sigs.k8s.io/kind/pkg/cluster/internal/loadbalancer"
 	"sigs.k8s.io/kind/pkg/cluster/internal/providers/common"
@@ -81,7 +81,7 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 		IPv6:             ctx.Config.Networking.IPFamily == config.IPv6Family,
 	})
 	if err != nil {
-		return errors.Wrap(err, "failed to generate loadbalancer config data")
+		return errors.Wrap(err, "failed to generate Envoy loadbalancer config data")
 	}
 
 	// create loadbalancer config on the node
@@ -90,9 +90,9 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 		return errors.Wrap(err, "failed to copy loadbalancer config to node")
 	}
 
-	// reload the config. haproxy will reload on SIGHUP
-	if err := loadBalancerNode.Command("kill", "-s", "HUP", "1").Run(); err != nil {
-		return errors.Wrap(err, "failed to reload loadbalancer")
+	// restart the loadbalancer node container
+	if err := exec.Command("docker", "restart", "kind-external-load-balancer").Run(); err != nil {
+		return errors.Wrap(err, "failed to restart loadbalancer container")
 	}
 
 	ctx.Status.End(true)
