@@ -41,7 +41,6 @@ resources:
     socket_address:
       address: {{ if .IPv6 }}"::"{{ else }}"0.0.0.0"{{ end }}
       port_value: {{ .ControlPlanePort }}
-      protocol: TCP
   filter_chains:
   - filters:
     - name: envoy.filters.network.tcp_proxy
@@ -62,17 +61,17 @@ resources:
   lb_policy: ROUND_ROBIN
   dns_lookup_family: AUTO
   load_assignment:
-      cluster_name: kube_apiservers
-      endpoints:
-      - lb_endpoints:
-        {{- range $server, $address := .BackendServers }}
-	{{- $hp := hostPort $address }}
-        - endpoint:
-            address:
-              socket_address:
-                address: {{ $hp.host }}
-                port_value: {{ $hp.port }}
-        {{- end }}
+    cluster_name: kube_apiservers
+    endpoints:
+    - lb_endpoints:
+{{- range $server, $address := .BackendServers }}
+{{- $hp := hostPort $address }}
+      - endpoint:
+          address:
+            socket_address:
+              address: {{ $hp.host }}
+              port_value: {{ $hp.port }}
+{{- end }}
 `
 
 func hostPort(addr string) (map[string]string, error) {
