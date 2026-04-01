@@ -20,7 +20,8 @@ package constants
 // DefaultClusterName is the default cluster Context name
 const DefaultClusterName = "kind"
 
-// start Envoy with dynamic configuration by using files that implement the xDS protocol.
+// DynamicFilesystemConfigTemplate holds the Envoy bootstrap configuration template
+// for file-based dynamic xDS (CDS and LDS).
 // https://www.envoyproxy.io/docs/envoy/latest/start/quick-start/configuration-dynamic-filesystem
 const DynamicFilesystemConfigTemplate = `
 node:
