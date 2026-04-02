@@ -32,7 +32,7 @@ type ConfigData struct {
 	IPv6             bool
 }
 
-// proxyLDSConfigTemplate is the loadbalancer config template for listeners
+// ProxyLDSConfigTemplate is the loadbalancer config template for listeners
 const ProxyLDSConfigTemplate = `
 resources:
 - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
@@ -50,7 +50,7 @@ resources:
         cluster: kube_apiservers
 `
 
-// proxyCDSConfigTemplate is the loadbalancer config template for clusters
+// ProxyCDSConfigTemplate is the loadbalancer config template for clusters
 // https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/health_check.proto#envoy-v3-api-msg-config-core-v3-healthcheck-httphealthcheck
 const ProxyCDSConfigTemplate = `
 resources:
